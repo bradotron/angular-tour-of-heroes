@@ -354,3 +354,51 @@ We want to add style to each ```<li>``` in the HeroesComponent, like this:
 * You used *ngFor to display a list.
 * You used *ngIf to conditionally include or exclude a block of HTML.
 * You can toggle a CSS style class with a class binding.
+
+# Create A Feature Component
+
+## Make the HeroDetailComponent
+```
+ng generate component hero-detail
+```
+
+## Create the Template
+Cut the detail html from the HeroesComponent template and put it into hero-detail.component.html
+
+## Add @Input() property
+The HeroDetailComponent needs a hero to bind to the component. In the HeroDetailComponent class file, import the Hero symbol.
+```
+import { Hero } from '../hero';
+```
+
+The ```hero``` property must be an input, annotated with @Input() so the external ```HeroesComponent``` will bind to it like this:
+```
+<app-hero-detail [hero]="selectedHero"></app-hero-detail>
+```
+
+But first, you need to include the ```Input``` symbol in the import statement from @angular/core, in ```hero-detail.component.ts```
+
+```
+import { Component, OnInit, Input } from '@angular/core';
+```
+
+Now add a hero property, with the @Input() decorator.
+```
+@Input() hero?: Hero;
+```
+
+## Show The HeroDetailComponent
+We will update the HeroesComponent to use the HeroDetailComponent to display hero details. The HeroesComponent will send a new hero to the HeroDetailComopnent whenever the user clicks a hero in the list. You will only change the HeroesComponent template.
+
+Update ```heroes.component.html``` by adding an ```<app-hero-detail>``` element at the bottom of the template.
+
+```
+<app-hero-detail [hero]="selectedHero"></app-hero-detail>
+```
+
+```[hero]="selectedHero"``` is an Angular property binding. This is a one-way binding from the ```selectedHero``` property of the ```HeroesComponent``` to the ```hero``` property of the target element.
+
+## Create a Feature Component - Summary 
+* You created a separate, reusable HeroDetailComponent.
+* You used a property binding to give the parent HeroesComponent control over the child HeroDetailComponent.
+* You used the @Input decorator to make the hero property available for binding by the external HeroesComponent.
