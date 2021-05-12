@@ -348,3 +348,9 @@ We want to add style to each ```<li>``` in the HeroesComponent, like this:
   <span class="badge">{{hero.id}}</span> {{hero.name}}
 </li>
 ```
+## Display A List - Summary
+* The Tour of Heroes application displays a list of heroes with a detail view.
+* The user can select a hero and see that hero's details.
+* You used *ngFor to display a list.
+* You used *ngIf to conditionally include or exclude a block of HTML.
+* You can toggle a CSS style class with a class binding.
