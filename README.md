@@ -185,4 +185,166 @@ Look back over at the running app, and see the HeroesComponent in is glory.
 # Display A List
 We need more heroes. We are going to create a file to import from, but this is just a stand-in for data that could come from a remote data server.
 
+## Create Some Heroes
 Create a file ```mock-heroes.ts``` in ```src/app/``` and Define a ```HEROES``` constant as an array and export it.
+```
+import { Hero } from './hero';
+
+export const HEROES: Hero[] = [
+  { id: 11, name: 'Dr Nice' },
+  { id: 12, name: 'Narco' },
+  { id: 13, name: 'Bombasto' },
+  { id: 14, name: 'Celeritas' },
+  { id: 15, name: 'Magneta' },
+  { id: 16, name: 'RubberMan' },
+  { id: 17, name: 'Dynama' },
+  { id: 18, name: 'Dr IQ' },
+  { id: 19, name: 'Magma' },
+  { id: 20, name: 'Tornado' }
+];
+```
+
+## Displaying Your Heroes
+Open the ```HeroesComponent``` class file, and import your mock heroes. (```app/heroes/heroes.component.ts```)
+```
+import { HEROES } from '../mock-heroes';
+```
+
+In the same file, define a property called ```heroes``` to expose the ```HEROES``` array for binding.
+```
+export class HeroesComponent implements OnInit {
+
+  heroes = HEROES;
+}
+```
+## List Heroes With *ngFor
+Open the ```HeroesComponent``` template and make it look like this:
+```
+<h2>My Heroes</h2>
+<ul class="heroes">
+  <li>
+    <span class="badge">{{hero.id}}</span> {{hero.name}}
+  </li>
+</ul>
+```
+This will result in an error, since the ```hero``` property no longer exists. This is where ```*ngFor``` comes in. Change the ```<li>``` element by adding this:
+```
+<li *ngFor="let hero of heroes">
+```
+* the asterisk is a critical part of the syntax
+
+Huzzah we now have a list of heroes!
+
+## Style Your Heroes
+We could add more styles to ```src/app/app.component.css```, but we would prefer to define private styles that are specific to the HeroesComponent.
+
+Open ```heroes.component.css``` and paste in the styles for the HeroesComponent.
+```
+/* HeroesComponent's private CSS styles */
+.heroes {
+  margin: 0 0 2em 0;
+  list-style-type: none;
+  padding: 0;
+  width: 15em;
+}
+.heroes li {
+  cursor: pointer;
+  position: relative;
+  left: 0;
+  background-color: #EEE;
+  margin: .5em;
+  padding: .3em 0;
+  height: 1.6em;
+  border-radius: 4px;
+}
+.heroes li:hover {
+  color: #2c3a41;
+  background-color: #e6e6e6;
+  left: .1em;
+}
+.heroes li.selected {
+  background-color: black;
+  color: white;
+}
+.heroes li.selected:hover {
+  background-color: #505050;
+  color: white;
+}
+.heroes li.selected:active {
+  background-color: black;
+  color: white;
+}
+.heroes .badge {
+  display: inline-block;
+  font-size: small;
+  color: white;
+  padding: 0.8em 0.7em 0 0.7em;
+  background-color:#405061;
+  line-height: 1em;
+  position: relative;
+  left: -1px;
+  top: -4px;
+  height: 1.8em;
+  margin-right: .8em;
+  border-radius: 4px 0 0 4px;
+}
+
+input {
+  padding: .5rem;
+}
+```
+
+## View Details
+When the user clicks a hero, the component should display the selected heroes details at the bottom of the page.
+
+### Add A Click Event Binding
+Add the click event binding to the ```<li>``` like this:
+```
+<li *ngFor="let hero of heroes" (click)="onSelect(hero)">
+```
+This errors out because we haven't created the ```onSelect(hero)``` method. Add the following to ```src/app/heroes/heroes.component.ts```
+```
+selectedHero?: Hero;
+onSelect(hero: Hero): void {
+  this.selectedHero = hero;
+}
+```
+
+### Add A Details Section
+Currently our component only has a list of heroes. We need a section for the details to appear. Add the folliwing after the closing tag of the list ```</ul>``` in ```heroes.component.html```.
+```
+<h2>{{selectedHero.name | uppercase}} Details</h2>
+<div><span>id: </span>{{selectedHero.id}}</div>
+<div>
+  <label for="hero-name">Hero name: </label>
+  <input id="hero-name" [(ngModel)]="selectedHero.name" placeholder="name">
+</div>
+```
+The app does not work again! This is because until a click happens, selectedHero is undefined.
+
+### Conditionally Display The Details With *ngIf
+The details should only display if ```selectedHero``` exists. Wrap the detail section in a ```<div>```. Add Angular's ```*ngIf``` to the ```<div>``` and set it to ```selectedHero```.
+```
+<div *ngIf="selectedHero">
+
+  <h2>{{selectedHero.name | uppercase}} Details</h2>
+  <div><span>id: </span>{{selectedHero.id}}</div>
+  <div>
+    <label for="hero-name">Hero name: </label>
+    <input id="hero-name" [(ngModel)]="selectedHero.name" placeholder="name">
+  </div>
+
+</div>
+```
+
+### Style The Selected Hero
+For easier identification of the selected hero, you can use the .selected CSS class in ```heroes.component.css```. To do this dynamically, you use class binding. To the element you want to style, add ```[class.some-css-class]="some-condition"``` to the element you want to style. 
+
+We want to add style to each ```<li>``` in the HeroesComponent, like this:
+```
+<li *ngFor="let hero of heroes"
+  [class.selected]="hero === selectedHero"
+  (click)="onSelect(hero)">
+  <span class="badge">{{hero.id}}</span> {{hero.name}}
+</li>
+```
